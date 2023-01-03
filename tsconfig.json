@@ -1,0 +1,15 @@
+{
+    "compilerOptions": {
+        "outDir": "./dist/",
+        "noImplicitAny": true,
+        "module": "ES2020",
+        "moduleResolution": "Node",
+        "watch": true,
+        "target": "ES5",
+        "sourceMap": true,
+        "allowSyntheticDefaultImports": true,
+        "jsx": "preserve",
+    },
+    "include": ["src/**/*"],
+    "exclude": ["node_modules", "**/*.spec.ts"]
+}
