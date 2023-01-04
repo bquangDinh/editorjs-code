@@ -11,8 +11,38 @@ Code block for [EditorJS](https://editorjs.io/) using [highlight.js](https://hig
 - Support readOnly mode
 
 ## Usage
+### Import your languages
+Import languages that you want to use for highlighting. Make sure you imported languages before initializing EditorJS
+```ts
+// my-language.js
+import hljs from 'highlight.js/lib/core'
+
+import Javascript from 'highlight.js/lib/languages/javascript'
+import AsciiDoc from 'highlight.js/lib/languages/asciidoc'
+
+// More detail for available languages: https://github.com/highlightjs/highlight.js/tree/main/src/languages
+
+hljs.registerLanguage('asciidoc', AsciiDoc)
+hljs.registerLanguage('javascript', Javascript)
+````
+If you don't want to do this tedious job, then you can import 40 common languages from highlightjs
+```ts
+// my-language.js
+import hljs from 'highlight.js/lib/common'
+```
+If you want to use all languages from highlightjs
+```ts
+// my-language.js
+import hljs from 'highlight.js'
+```
+> **Warning**
+Importing all language from highlightjs will produce a huge bundled size (~4.0MB). So be careful with your choice
+### Usage
+
 ```ts
 import { CodeBlock, ICodeBlockConfigs } from 'editorjs-code'
+
+import './my-language'
 
 const editorjs = new EditorJS({
     ...
@@ -23,8 +53,8 @@ const editorjs = new EditorJS({
           allowValidation: true,
           supportedLanguages: [
             {
-              label: 'C++',
-              value: 'cpp
+              label: 'Ascii Doc',
+              value: 'asciidoc'
             },
             {
               label: 'Javascript',
