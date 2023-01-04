@@ -8,6 +8,8 @@ export interface ISelectOption {
 export interface IMakeSelectConfigs {
   classNames?: string[] | string;
   attributes?: Record<string, string>;
+  /* Callbacks */
+  onSelect: (value: string) => unknown;
 }
 
 /* Helper functions */
@@ -54,12 +56,97 @@ export const makeSelect = (
     }
   }
 
-  const selectContainer = make("div", classNames, attributes);
+  let selectContainer: HTMLDivElement,
+    select: HTMLSelectElement,
+    opt: HTMLOptionElement,
+    selected: HTMLDivElement,
+    arrowIcon: SVGSVGElement,
+    arrowIconPath: SVGPathElement,
+    optionsContainer: HTMLDivElement,
+    searchInput: HTMLInputElement,
+    optionsListContainer: HTMLDivElement,
+    optionDiv: HTMLDivElement;
 
-  const select = make("select") as HTMLSelectElement;
+  /* Helper functions */
+  const renderOptions = (opts: ISelectOption[], firstInit?: boolean) => {
+    if (!optionsListContainer || !select || !selected) {
+      throw new Error("Element not found");
+    }
 
-  let opt: HTMLOptionElement;
+    if (!firstInit) {
+      // Clear select
+      select.replaceChildren();
 
+      // Clear content inside the list
+      optionsListContainer.replaceChildren();
+
+      // Render select
+      for (const option of opts) {
+        opt = make("option") as HTMLOptionElement;
+
+        opt.value = option.value;
+        opt.innerText = option.label;
+
+        select.appendChild(opt);
+      }
+    }
+
+    // Render options
+    for (let i = 0; i < opts.length; ++i) {
+      /* For each option in the original select element,
+          create a new DIV that will act as an option item: */
+      optionDiv = make("div", undefined, {
+        "data-value": opts[i].value,
+      }) as HTMLDivElement;
+
+      optionDiv.innerHTML = select.options[i].innerHTML;
+
+      optionDiv.addEventListener("click", (e) => {
+        const target = e.target as HTMLDivElement;
+
+        const value = target.dataset.value;
+
+        /*
+                  When an item is clicked, update the original select box, and the selected item
+              */
+        for (let j = 0; j < options.length; ++j) {
+          if (select.options[j].value === value) {
+            select.selectedIndex = j;
+            selected.innerHTML = target.innerHTML;
+            selected.appendChild(arrowIcon);
+
+            // Clear the previous selected item in the option list
+            const sameAsSelected =
+              optionsListContainer.getElementsByClassName("same-as-selected");
+
+            for (let k = 0; k < sameAsSelected.length; ++k) {
+              sameAsSelected[k].removeAttribute("class");
+            }
+
+            // Update this target as current selected
+            target.setAttribute("class", "same-as-selected");
+
+            break;
+          }
+        }
+
+        selected.click();
+
+        // Callback
+        if (configs && configs.onSelect) {
+          configs.onSelect(value);
+        }
+      });
+
+      optionsListContainer.appendChild(optionDiv);
+    }
+  };
+
+  selectContainer = make("div", classNames, attributes) as HTMLDivElement;
+
+  select = make("select") as HTMLSelectElement;
+
+  // Render select
   for (const option of options) {
     opt = make("option") as HTMLOptionElement;
 
@@ -69,24 +156,19 @@ export const makeSelect = (
     select.appendChild(opt);
   }
 
-  selectContainer.append(select);
-
   /* Build custom style select */
-  const selected = make("div", "select-selected");
+  selected = make("div", "select-selected") as HTMLDivElement;
 
   selected.innerHTML = select.options[select.selectedIndex].innerHTML;
 
   /* Arrow icon */
-  const arrowIcon = document.createElementNS(
-    "http://www.w3.org/2000/svg",
-    "svg"
-  );
+  arrowIcon = document.createElementNS("http://www.w3.org/2000/svg", "svg");
 
   arrowIcon.setAttribute("viewBox", "0 0 448 512");
 
   arrowIcon.classList.add("arrow-icon");
 
-  const arrowIconPath = document.createElementNS(
+  arrowIconPath = document.createElementNS(
     "http://www.w3.org/2000/svg",
     "path"
   );
@@ -103,53 +185,43 @@ export const makeSelect = (
   selectContainer.appendChild(selected);
 
   /* Create options container */
-  const optionsContainer = make("div", ["select-items", "select-hide"]);
+  optionsContainer = make("div", [
+    "select-items",
+    "select-hide",
+  ]) as HTMLDivElement;
 
-  let optionDiv: HTMLDivElement;
+  /* Search input */
+  searchInput = make("input", "search-input", {
+    placeholder: "Search",
+  }) as HTMLInputElement;
 
-  for (let i = 0; i < options.length; ++i) {
-    /* For each option in the original select element,
-    create a new DIV that will act as an option item: */
-    optionDiv = make("div", undefined, {
-      "data-value": options[i].value,
-    }) as HTMLDivElement;
+  searchInput.onclick = (e: MouseEvent) => {
+    e.stopPropagation();
+  };
 
-    optionDiv.innerHTML = select.options[i].innerHTML;
+  searchInput.oninput = (e: Event) => {
+    const search = (e.target as HTMLInputElement).value;
 
-    optionDiv.addEventListener("click", (e) => {
-      const target = e.target as HTMLDivElement;
+    const filteredOptions =
+      search.trim() !== ""
+        ? options.filter((option) => {
+            return option.label.toLowerCase().includes(search.toLowerCase());
+          })
+        : options;
 
-      const value = target.dataset.value;
+    renderOptions(filteredOptions);
 
-      /*
-            When an item is clicked, update the original select box, and the selected item
-        */
-      for (let j = 0; j < options.length; ++j) {
-        if (select.options[j].value === value) {
-          select.selectedIndex = j;
-          selected.innerHTML = target.innerHTML;
-          selected.appendChild(arrowIcon);
+    e.stopPropagation();
+  };
 
-          // Clear the previous selected item in the option list
-          const sameAsSelected =
-            optionsContainer.getElementsByClassName("same-as-selected");
+  optionsContainer.appendChild(searchInput);
 
-          for (let k = 0; k < sameAsSelected.length; ++k) {
-            sameAsSelected[k].removeAttribute("class");
-          }
+  /* Options List container */
+  optionsListContainer = make("div", "items-list") as HTMLDivElement;
 
-          // Update this target as current selected
-          target.setAttribute("class", "same-as-selected");
+  renderOptions(options, true);
 
-          break;
-        }
-      }
-
-      selected.click();
-    });
-
-    optionsContainer.appendChild(optionDiv);
-  }
+  optionsContainer.appendChild(optionsListContainer);
 
   selectContainer.appendChild(optionsContainer);
 
@@ -168,11 +240,17 @@ export const makeSelect = (
     optionsContainer.classList.toggle("select-hide");
 
     target.classList.toggle("select-arrow-active");
+
+    // Clear search input
+    searchInput.value = "";
+
+    // Reset select options
+    renderOptions(options)
   });
 
   return selectContainer;
 };
 
-document.addEventListener('click', () => {
-    closeAllSelect()
-})
+document.addEventListener("click", () => {
+  closeAllSelect();
+});
