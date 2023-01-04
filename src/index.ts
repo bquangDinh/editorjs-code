@@ -11,20 +11,9 @@ window.onload = () => {
         class: CodeBlock,
         config: {
           allowValidation: true,
-          supportedLanguages: [
-            {
-              label: 'C++',
-              value: 'cpp',
-            },
-            {
-              label: 'C#',
-              value: 'csharp',
-            },
-          ],
         } as ICodeBlockConfigs,
       },
     },
-    readOnly: true,
     data: {
       time: 1672811648409,
       blocks: [

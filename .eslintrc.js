@@ -11,7 +11,7 @@ module.exports = {
     // e.g. '@typescript-eslint/explicit-function-return-type': 'off',
     "semi": ["error", "never"],
     "prettier/prettier": ["error", {"singleQuote": true, "semi": false, "endOfLine": 'auto',}],
-    "prefer-const": ["warn", {
+    "prefer-const": ["off", {
         "destructuring": "any",
         "ignoreReadBeforeAssign": true
     }],

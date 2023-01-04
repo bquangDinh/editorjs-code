@@ -294,8 +294,11 @@ export class CodeBlock implements BlockTool {
       placeholder: this.api
         ? this.api.i18n.t('Enter your code')
         : 'Enter your code',
-      disabled: this.readOnly ? 'true' : 'false',
-    })
+    }) as HTMLTextAreaElement
+
+    inputLayer.disabled = this.readOnly
+
+    inputLayer.spellcheck = false
 
     contentLayer.appendChild(renderedLayer)
 
@@ -494,8 +497,9 @@ export class CodeBlock implements BlockTool {
         placeholder: this.api
           ? this.api.i18n.t('Write your caption')
           : 'Write your caption',
-        disabled: this.readOnly ? 'true' : 'false',
-      })
+      }) as HTMLTextAreaElement
+
+      input.disabled = this.readOnly
 
       input.onkeydown = this.onCaptionKeyDown.bind(this)
 
