@@ -2,6 +2,12 @@ import EditorJS from '@editorjs/editorjs'
 
 import CodeBlock, { ICodeBlockConfigs } from './plugin'
 
+import hljs from 'highlight.js/lib/core'
+
+import AsciiDoc from 'highlight.js/lib/languages/asciidoc'
+
+hljs.registerLanguage('asciidoc', AsciiDoc)
+
 window.onload = () => {
   const editorjs = new EditorJS({
     autofocus: true,
@@ -11,6 +17,16 @@ window.onload = () => {
         class: CodeBlock,
         config: {
           allowValidation: true,
+          supportedLanguages: [
+            {
+              label: 'Ascii Doc',
+              value: 'asciidoc',
+            },
+            {
+              label: 'C++',
+              value: 'cpp',
+            },
+          ],
         } as ICodeBlockConfigs,
       },
     },

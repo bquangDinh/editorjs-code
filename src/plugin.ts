@@ -9,7 +9,7 @@ import { makeSelect } from './ui'
 import { Utils } from './utils/util'
 
 /* Libs */
-import hljs from 'highlight.js'
+import hljs from 'highlight.js/lib/core'
 
 /* Constants */
 import {
