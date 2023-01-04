@@ -37,7 +37,7 @@ export interface ICodeBlockConstructorParams {
   readOnly?: boolean
 }
 
-export class CodeBlock implements BlockTool {
+export default class CodeBlock implements BlockTool {
   /**
    * Reference for editing area
    */

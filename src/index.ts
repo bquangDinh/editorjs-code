@@ -1,6 +1,6 @@
 import EditorJS from '@editorjs/editorjs'
 
-import { CodeBlock, ICodeBlockConfigs } from './plugin'
+import CodeBlock, { ICodeBlockConfigs } from './plugin'
 
 window.onload = () => {
   const editorjs = new EditorJS({

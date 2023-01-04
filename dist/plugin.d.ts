@@ -18,7 +18,7 @@ export interface ICodeBlockConstructorParams {
     api?: API;
     readOnly?: boolean;
 }
-export declare class CodeBlock implements BlockTool {
+export default class CodeBlock implements BlockTool {
     /**
      * Reference for editing area
      */
