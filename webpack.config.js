@@ -1,41 +1,75 @@
-const HtmlWebpackPlugin = require('html-webpack-plugin')
-const path = require('path')
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const path = require('path');
 
-module.exports = {
-    entry: './src/index.ts',
+module.exports = (env, argv) => {
+  const NODE_ENV = argv.mode || 'development';
+
+  const entry = NODE_ENV === 'production' ? './src/plugin.ts' : './src/index.ts';
+
+  const plugins =
+    NODE_ENV === 'production'
+      ? []
+      : [
+          new HtmlWebpackPlugin({
+            title: 'EditorJs Code Playground',
+            template: 'public/index.html',
+          }),
+        ];
+
+  let output = {
+    filename: 'bundle.js',
+    path: path.resolve(__dirname, 'dist'),
+  };
+
+  let outputForProduction = {};
+
+  if (NODE_ENV === 'production') {
+    outputForProduction = {
+      library: 'CodeTool',
+      libraryTarget: 'umd',
+      libraryExport: 'default',
+    };
+  }
+
+  output = Object.assign(output, outputForProduction)
+
+  return {
+    entry: entry,
     devtool: 'inline-source-map',
     module: {
-        rules: [
+      rules: [
+        {
+          test: /\.(ts|tsx)$/,
+          enforce: 'pre',
+          use: [
             {
-                test: /\.tsx?$/,
-                use: 'ts-loader',
-                exclude: '/node_modules',
+              options: {
+                eslintPath: require.resolve('eslint'),
+              },
+              loader: require.resolve('eslint-loader'),
             },
-            {
-                test: /\.s[ac]ss$/i,
-                use: [
-                    'style-loader',
-                    'css-loader',
-                    'sass-loader'
-                ],
-                exclude: '/node_modules'
-            }
-        ]
+          ],
+          exclude: /node_modules/,
+        },
+        {
+          test: /\.tsx?$/,
+          use: 'ts-loader',
+          exclude: '/node_modules',
+        },
+        {
+          test: /\.s[ac]ss$/i,
+          use: ['style-loader', 'css-loader', 'sass-loader'],
+          exclude: '/node_modules',
+        },
+      ],
     },
     resolve: {
-        extensions: ['.tsx', '.ts', '.js'],
+      extensions: ['.tsx', '.ts', '.js'],
     },
-    output: {
-        filename: 'main.js',
-        path: path.resolve(__dirname, 'dist')
-    },
-    plugins: [
-        new HtmlWebpackPlugin({
-            title: 'EditorJs Code Playground',
-            template: 'public/index.html'
-        })
-    ],
+    output: output,
+    plugins: plugins,
     watchOptions: {
-        ignored: '**/node_modules',
-    }
-}
+      ignored: '**/node_modules',
+    },
+  };
+};

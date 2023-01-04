@@ -1,58 +1,58 @@
-import { make } from "./utils/dom.util";
+import { make } from './utils/dom.util'
 
 export interface ISelectOption {
-  label: string;
-  value: string;
+  label: string
+  value: string
 }
 
 export interface IMakeSelectConfigs {
-  classNames?: string[] | string;
-  attributes?: Record<string, string>;
+  classNames?: string[] | string
+  attributes?: Record<string, string>
   /* Callbacks */
-  onSelect: (value: string) => unknown;
+  onSelect: (value: string) => unknown
 }
 
 /* Helper functions */
 function closeAllSelect(el?: HTMLElement) {
   const selectItems = document.querySelectorAll(
-    ".editorjs-code-language-select .select-items"
-  );
+    '.editorjs-code-language-select .select-items',
+  )
   const selecteds = document.querySelectorAll(
-    ".editorjs-code-language-select .select-selected"
-  );
-  const arrNo: number[] = [];
+    '.editorjs-code-language-select .select-selected',
+  )
+  const arrNo: number[] = []
 
   for (let i = 0; i < selecteds.length; ++i) {
     if (el === selecteds[i]) {
-      arrNo.push(i);
+      arrNo.push(i)
     } else {
-      selecteds[i].classList.remove("select-arrow-active");
+      selecteds[i].classList.remove('select-arrow-active')
     }
   }
 
   for (let i = 0; i < selectItems.length; ++i) {
     if (arrNo.indexOf(i)) {
-      selectItems[i].classList.add("select-hide");
+      selectItems[i].classList.add('select-hide')
     }
   }
 }
 
 export const makeSelect = (
   options: ISelectOption[],
-  configs?: IMakeSelectConfigs
+  configs?: IMakeSelectConfigs,
 ) => {
-  let classNames = ["editorjs-code-language-select"];
-  let attributes: Record<string, string> = {};
+  const classNames = ['editorjs-code-language-select']
+  let attributes: Record<string, string> = {}
 
   if (configs) {
     if (configs.classNames) {
       Array.isArray(configs.classNames)
         ? classNames.push(...configs.classNames)
-        : classNames.push(configs.classNames);
+        : classNames.push(configs.classNames)
     }
 
     if (configs.attributes) {
-      attributes = Object.assign(attributes, configs.attributes);
+      attributes = Object.assign(attributes, configs.attributes)
     }
   }
 
@@ -65,29 +65,29 @@ export const makeSelect = (
     optionsContainer: HTMLDivElement,
     searchInput: HTMLInputElement,
     optionsListContainer: HTMLDivElement,
-    optionDiv: HTMLDivElement;
+    optionDiv: HTMLDivElement
 
   /* Helper functions */
   const renderOptions = (opts: ISelectOption[], firstInit?: boolean) => {
     if (!optionsListContainer || !select || !selected) {
-      throw new Error("Element not found");
+      throw new Error('Element not found')
     }
 
     if (!firstInit) {
       // Clear select
-      select.replaceChildren();
+      select.replaceChildren()
 
       // Clear content inside the list
-      optionsListContainer.replaceChildren();
+      optionsListContainer.replaceChildren()
 
       // Render select
       for (const option of opts) {
-        opt = make("option") as HTMLOptionElement;
+        opt = make('option') as HTMLOptionElement
 
-        opt.value = option.value;
-        opt.innerText = option.label;
+        opt.value = option.value
+        opt.innerText = option.label
 
-        select.appendChild(opt);
+        select.appendChild(opt)
       }
     }
 
@@ -95,162 +95,159 @@ export const makeSelect = (
     for (let i = 0; i < opts.length; ++i) {
       /* For each option in the original select element,
           create a new DIV that will act as an option item: */
-      optionDiv = make("div", undefined, {
-        "data-value": opts[i].value,
-      }) as HTMLDivElement;
+      optionDiv = make('div', undefined, {
+        'data-value': opts[i].value,
+      }) as HTMLDivElement
 
-      optionDiv.innerHTML = select.options[i].innerHTML;
+      optionDiv.innerHTML = select.options[i].innerHTML
 
-      optionDiv.addEventListener("click", (e) => {
-        const target = e.target as HTMLDivElement;
+      optionDiv.addEventListener('click', (e) => {
+        const target = e.target as HTMLDivElement
 
-        const value = target.dataset.value;
+        const value = target.dataset.value
 
         /*
                   When an item is clicked, update the original select box, and the selected item
               */
         for (let j = 0; j < options.length; ++j) {
           if (select.options[j].value === value) {
-            select.selectedIndex = j;
-            selected.innerHTML = target.innerHTML;
-            selected.appendChild(arrowIcon);
+            select.selectedIndex = j
+            selected.innerHTML = target.innerHTML
+            selected.appendChild(arrowIcon)
 
             // Clear the previous selected item in the option list
             const sameAsSelected =
-              optionsListContainer.getElementsByClassName("same-as-selected");
+              optionsListContainer.getElementsByClassName('same-as-selected')
 
             for (let k = 0; k < sameAsSelected.length; ++k) {
-              sameAsSelected[k].removeAttribute("class");
+              sameAsSelected[k].removeAttribute('class')
             }
 
             // Update this target as current selected
-            target.setAttribute("class", "same-as-selected");
+            target.setAttribute('class', 'same-as-selected')
 
-            break;
+            break
           }
         }
 
-        selected.click();
+        selected.click()
 
         // Callback
         if (configs && configs.onSelect) {
-          configs.onSelect(value);
+          configs.onSelect(value)
         }
-      });
+      })
 
-      optionsListContainer.appendChild(optionDiv);
+      optionsListContainer.appendChild(optionDiv)
     }
-  };
+  }
 
-  selectContainer = make("div", classNames, attributes) as HTMLDivElement;
+  selectContainer = make('div', classNames, attributes) as HTMLDivElement
 
-  select = make("select") as HTMLSelectElement;
+  select = make('select') as HTMLSelectElement
 
   // Render select
   for (const option of options) {
-    opt = make("option") as HTMLOptionElement;
+    opt = make('option') as HTMLOptionElement
 
-    opt.value = option.value;
-    opt.innerText = option.label;
+    opt.value = option.value
+    opt.innerText = option.label
 
-    select.appendChild(opt);
+    select.appendChild(opt)
   }
 
   /* Build custom style select */
-  selected = make("div", "select-selected") as HTMLDivElement;
+  selected = make('div', 'select-selected') as HTMLDivElement
 
-  selected.innerHTML = select.options[select.selectedIndex].innerHTML;
+  selected.innerHTML = select.options[select.selectedIndex].innerHTML
 
   /* Arrow icon */
-  arrowIcon = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  arrowIcon = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
 
-  arrowIcon.setAttribute("viewBox", "0 0 448 512");
+  arrowIcon.setAttribute('viewBox', '0 0 448 512')
 
-  arrowIcon.classList.add("arrow-icon");
+  arrowIcon.classList.add('arrow-icon')
 
-  arrowIconPath = document.createElementNS(
-    "http://www.w3.org/2000/svg",
-    "path"
-  );
+  arrowIconPath = document.createElementNS('http://www.w3.org/2000/svg', 'path')
 
   arrowIconPath.setAttribute(
-    "d",
-    "M201.4 374.6c12.5 12.5 32.8 12.5 45.3 0l160-160c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L224 306.7 86.6 169.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l160 160z"
-  );
+    'd',
+    'M201.4 374.6c12.5 12.5 32.8 12.5 45.3 0l160-160c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L224 306.7 86.6 169.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l160 160z',
+  )
 
-  arrowIcon.appendChild(arrowIconPath);
+  arrowIcon.appendChild(arrowIconPath)
 
-  selected.appendChild(arrowIcon);
+  selected.appendChild(arrowIcon)
 
-  selectContainer.appendChild(selected);
+  selectContainer.appendChild(selected)
 
   /* Create options container */
-  optionsContainer = make("div", [
-    "select-items",
-    "select-hide",
-  ]) as HTMLDivElement;
+  optionsContainer = make('div', [
+    'select-items',
+    'select-hide',
+  ]) as HTMLDivElement
 
   /* Search input */
-  searchInput = make("input", "search-input", {
-    placeholder: "Search",
-  }) as HTMLInputElement;
+  searchInput = make('input', 'search-input', {
+    placeholder: 'Search',
+  }) as HTMLInputElement
 
   searchInput.onclick = (e: MouseEvent) => {
-    e.stopPropagation();
-  };
+    e.stopPropagation()
+  }
 
   searchInput.oninput = (e: Event) => {
-    const search = (e.target as HTMLInputElement).value;
+    const search = (e.target as HTMLInputElement).value
 
     const filteredOptions =
-      search.trim() !== ""
+      search.trim() !== ''
         ? options.filter((option) => {
-            return option.label.toLowerCase().includes(search.toLowerCase());
+            return option.label.toLowerCase().includes(search.toLowerCase())
           })
-        : options;
+        : options
 
-    renderOptions(filteredOptions);
+    renderOptions(filteredOptions)
 
-    e.stopPropagation();
-  };
+    e.stopPropagation()
+  }
 
-  optionsContainer.appendChild(searchInput);
+  optionsContainer.appendChild(searchInput)
 
   /* Options List container */
-  optionsListContainer = make("div", "items-list") as HTMLDivElement;
+  optionsListContainer = make('div', 'items-list') as HTMLDivElement
 
-  renderOptions(options, true);
+  renderOptions(options, true)
 
-  optionsContainer.appendChild(optionsListContainer);
+  optionsContainer.appendChild(optionsListContainer)
 
-  selectContainer.appendChild(optionsContainer);
+  selectContainer.appendChild(optionsContainer)
 
-  selected.addEventListener("click", (e) => {
-    const target = e.target as HTMLDivElement;
+  selected.addEventListener('click', (e) => {
+    const target = e.target as HTMLDivElement
 
     /**
      * When the select box is clicked, close any other select boxes,
      * and open/close the current select box
      */
 
-    closeAllSelect(selected);
+    closeAllSelect(selected)
 
-    e.stopPropagation();
+    e.stopPropagation()
 
-    optionsContainer.classList.toggle("select-hide");
+    optionsContainer.classList.toggle('select-hide')
 
-    target.classList.toggle("select-arrow-active");
+    target.classList.toggle('select-arrow-active')
 
     // Clear search input
-    searchInput.value = "";
+    searchInput.value = ''
 
     // Reset select options
     renderOptions(options)
-  });
+  })
 
-  return selectContainer;
-};
+  return selectContainer
+}
 
-document.addEventListener("click", () => {
-  closeAllSelect();
-});
+document.addEventListener('click', () => {
+  closeAllSelect()
+})

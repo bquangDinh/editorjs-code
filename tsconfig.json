@@ -9,6 +9,7 @@
         "sourceMap": true,
         "allowSyntheticDefaultImports": true,
         "jsx": "preserve",
+        "declaration": true
     },
     "include": ["src/**/*"],
     "exclude": ["node_modules", "**/*.spec.ts"]
