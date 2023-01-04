@@ -108,12 +108,11 @@ export default class CodeBlock implements BlockTool {
       this.data = data
 
       this.currentSelectedLanguage = data.language
-    } else {
-      console.error('[Code Block] Saved data is not valid. Data:', data)
     }
 
     /* Save Config */
-    if (config) {
+    /* When readOnly mode is true, then there's no point to set config here */
+    if (config && !readOnly) {
       this.configs = Object.assign(this.configs, config)
 
       if (config.supportedLanguages) {
@@ -220,6 +219,8 @@ export default class CodeBlock implements BlockTool {
 
     if (this.readOnly) {
       const language = make('span', 'language')
+
+      console.log(this.currentSelectedLanguage)
 
       const lang = this.supportedLanguages.find(
         (l) => l.value === this.currentSelectedLanguage,
