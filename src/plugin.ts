@@ -119,27 +119,27 @@ export class CodeBlock implements BlockTool {
       if (config.supportedLanguages) {
         if (config.supportedLanguages.length > 0) {
           this.supportedLanguages = config.supportedLanguages
-
-          if (config.defaultLanguage) {
-            const index = this.supportedLanguages.findIndex(
-              (l) => l.value === config.defaultLanguage,
-            )
-
-            if (index !== -1) {
-              this.currentSelectedLanguage = config.defaultLanguage
-            } else {
-              throw new Error(
-                'The default language you provided is not existed in the given supported languages. More detail about supported languages from highlight.js: https://github.com/highlightjs/highlight.js/blob/main/SUPPORTED_LANGUAGES.md',
-              )
-            }
-          } else {
-            this.currentSelectedLanguage = this.supportedLanguages[0].value
-          }
         } else {
           throw new Error(
             'An empty array of supported languages is detected! Please check again',
           )
         }
+      }
+
+      if (config.defaultLanguage) {
+        const index = this.supportedLanguages.findIndex(
+          (l) => l.value === config.defaultLanguage,
+        )
+
+        if (index !== -1) {
+          this.currentSelectedLanguage = config.defaultLanguage
+        } else {
+          throw new Error(
+            'The default language you provided is not existed in the given supported languages. More detail about supported languages from highlight.js: https://github.com/highlightjs/highlight.js/blob/main/SUPPORTED_LANGUAGES.md',
+          )
+        }
+      } else {
+        this.currentSelectedLanguage = this.supportedLanguages[0].value
       }
     }
 
