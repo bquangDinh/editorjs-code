@@ -10,6 +10,10 @@ Code block for [EditorJS](https://editorjs.io/) using [highlight.js](https://hig
 - Easy selecting language with search
 - Support readOnly mode
 
+## Install
+`
+npm install bquangDinh/editorjs-code highlight.js
+`
 ## Usage
 ### Import your languages
 Import languages that you want to use for highlighting. Make sure you imported languages before initializing EditorJS
@@ -76,10 +80,38 @@ Code Tool supports these config params:
 | Field | Type        | Description         |
 | ----- | ----------- | ------------------- |
 | allowValidation | `boolean` | Set to false to disable EditorJS validation. Default is `false`. EditorJS validation set to true will ignore empty code when saving |
-| supportedLanguages | `{label: string, value: string}[]` | List of languages for highlighting. Default is [SUPPORTED_LANGUAGES](https://github.com/bquangDinh/editorjs-code/blob/main/src/constants/languages.constant.ts) Languages must be supported by highlight.js. `label` could be any name you want, but `value` must be highlight.js language alias. Please see more detail here [Highlight.js supported languages](https://github.com/highlightjs/highlight.js/blob/main/SUPPORTED_LANGUAGES.md) |
+| supportedLanguages | `{label: string, value: string}[]` | If you want custom label names for languages (that shows in the select box). `value` must be the alias that you have registered |
 | defaultLanguage | `string` | The default language for highlighting when Code Block first initialized. If `supportedLanguages` param is presented, `defaultLanguage` must be presented in `supportedLanguages` values. Default is `bash` |
 | onContentCopied | `(value: string) => void` | Callback when content is copied from Code Bloc. `value` is the current content of the Code Block |
 
+### Example
+```ts
+import AsciiDoc from 'highlight.js/lib/languages/asciidoc'
+import Typescript from 'highlight.js/lib/languages/typescript'
+
+hljs.registerLanguage('asciidoc', AsciiDoc)
+hljs.registerLanguage('typescript', Typescript)
+
+const editorjs = new EditorJS({
+    autofocus: true,
+    holder: 'editorjs-holder',
+    tools: {
+      code: {
+        class: CodeBlock,
+        config: {
+          allowValidation: true, // ignores code block that has empty code when saving
+          supportedLanguages: [
+            {
+              label: 'myname', // custom name here. Then select box will show 'myname' for ascii instead of 'Ascii Doc'
+              value: 'asciidoc', // make sure it's the same alias as you registered above
+            },
+          ],
+          defaultLanguage: 'typescript' // 'typescript' wil be the default when EditorJS first initialized
+        } as ICodeBlockConfigs,
+      },
+    },
+  })
+```
 ## Saving Data
 
 This is the saved data structure:
