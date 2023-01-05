@@ -360,14 +360,14 @@ export default class CodeBlock implements BlockTool {
    * @returns {ICodeBlockData}
    */
   save() {
-    if (!this.inputRef || !this.captionInputRef) {
+    if (!this.inputRef) {
       throw new Error('No ref found! You may forgot to call render()')
     }
 
     return {
       language: this.currentSelectedLanguage,
       code: this.inputRef.value,
-      caption: this.captionInputRef.value,
+      caption: this.captionInputRef ? this.captionInputRef.value : '',
     }
   }
 
