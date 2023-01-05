@@ -9,7 +9,8 @@ import { makeSelect } from './ui'
 import { Utils } from './utils/util'
 
 /* Libs */
-import hljs from 'highlight.js/lib/core'
+import hljs from 'highlight.js/lib/common'
+
 import { HIGHLIGHTJS_LANGUAGES } from './constants/highlightjs-languages'
 
 export interface ISupportedLanguage {
@@ -215,6 +216,10 @@ export default class CodeBlock implements BlockTool {
 
         this.supportedLanguages.push(lang)
       }
+    }
+
+    if (this.supportedLanguages.length === 0) {
+      throw new Error('An empty supported languages is provided!')
     }
   }
 
