@@ -25,6 +25,7 @@ window.onload = () => {
               value: 'asciidoc', // make sure it's the same alias as you registered above
             },
           ],
+          defaultLanguage: 'typescript',
         } as ICodeBlockConfigs,
       },
     },

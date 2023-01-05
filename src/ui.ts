@@ -8,6 +8,7 @@ export interface ISelectOption {
 export interface IMakeSelectConfigs {
   classNames?: string[] | string
   attributes?: Record<string, string>
+  defaultOption?: string
   /* Callbacks */
   onSelect: (value: string) => unknown
 }
@@ -41,6 +42,8 @@ export const makeSelect = (
   options: ISelectOption[],
   configs?: IMakeSelectConfigs,
 ) => {
+  if (options.length === 0) return
+
   const classNames = ['editorjs-code-language-select']
   let attributes: Record<string, string> = {}
 
@@ -159,7 +162,10 @@ export const makeSelect = (
   /* Build custom style select */
   selected = make('div', 'select-selected') as HTMLDivElement
 
-  selected.innerHTML = select.options[select.selectedIndex].innerHTML
+  selected.innerHTML =
+    configs && configs.defaultOption
+      ? options.find((o) => o.value === configs.defaultOption).label
+      : options[0].label
 
   /* Arrow icon */
   arrowIcon = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
@@ -216,7 +222,8 @@ export const makeSelect = (
   /* Options List container */
   optionsListContainer = make('div', 'items-list') as HTMLDivElement
 
-  currentSelected = options[0].value
+  currentSelected =
+    configs && configs.defaultOption ? configs.defaultOption : options[0].value
 
   renderOptions(options, true)
 

@@ -5,6 +5,7 @@ export interface ISelectOption {
 export interface IMakeSelectConfigs {
     classNames?: string[] | string;
     attributes?: Record<string, string>;
+    defaultOption?: string;
     onSelect: (value: string) => unknown;
 }
 export declare const makeSelect: (options: ISelectOption[], configs?: IMakeSelectConfigs) => HTMLDivElement;

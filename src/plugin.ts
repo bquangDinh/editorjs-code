@@ -243,6 +243,7 @@ export default class CodeBlock implements BlockTool {
       controlContainer.appendChild(language)
     } else {
       const languageSelect = makeSelect(this.supportedLanguages, {
+        defaultOption: this.currentSelectedLanguage,
         onSelect: this.onSelectLanguage.bind(this),
       })
 
