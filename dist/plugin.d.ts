@@ -1,6 +1,9 @@
 import './style.scss';
 import { API, BlockTool } from '@editorjs/editorjs';
-import { ISupportedLanguage } from './constants/languages.constant';
+export interface ISupportedLanguage {
+    label: string;
+    value: string;
+}
 export interface ICodeBlockData {
     language: string;
     code: string;
@@ -97,6 +100,7 @@ export default class CodeBlock implements BlockTool {
      * @returns {boolean}
      */
     isDataValid(data: ICodeBlockData): boolean;
+    buildSupportedLanguages(custom?: ISupportedLanguage[]): void;
     /**
      * Renders Block content
      *

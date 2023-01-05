@@ -10,12 +10,12 @@ import { Utils } from './utils/util'
 
 /* Libs */
 import hljs from 'highlight.js/lib/core'
+import { HIGHLIGHTJS_LANGUAGES } from './constants/highlightjs-languages'
 
-/* Constants */
-import {
-  ISupportedLanguage,
-  SUPPORTED_LANGUAGES,
-} from './constants/languages.constant'
+export interface ISupportedLanguage {
+  label: string
+  value: string
+}
 
 export interface ICodeBlockData {
   language: string
@@ -62,12 +62,12 @@ export default class CodeBlock implements BlockTool {
    * List of supported languages for highlighting syntax
    * Please check more information at: https://github.com/highlightjs/highlight.js/blob/main/SUPPORTED_LANGUAGES.md
    */
-  private supportedLanguages = SUPPORTED_LANGUAGES
+  private supportedLanguages: ISupportedLanguage[] = []
 
   /**
    * Current language used for highlighting
    */
-  private currentSelectedLanguage = SUPPORTED_LANGUAGES[0].value
+  private currentSelectedLanguage = ''
 
   /**
    * A flag to check whether user just copied code
@@ -110,20 +110,13 @@ export default class CodeBlock implements BlockTool {
       this.currentSelectedLanguage = data.language
     }
 
+    /* Build supported languages based on hljs registered languages */
+    this.buildSupportedLanguages(config.supportedLanguages)
+
     /* Save Config */
     /* When readOnly mode is true, then there's no point to set config here */
     if (config && !readOnly) {
       this.configs = Object.assign(this.configs, config)
-
-      if (config.supportedLanguages) {
-        if (config.supportedLanguages.length > 0) {
-          this.supportedLanguages = config.supportedLanguages
-        } else {
-          throw new Error(
-            'An empty array of supported languages is detected! Please check again',
-          )
-        }
-      }
 
       if (config.defaultLanguage) {
         const index = this.supportedLanguages.findIndex(
@@ -204,6 +197,27 @@ export default class CodeBlock implements BlockTool {
     return false
   }
 
+  buildSupportedLanguages(custom?: ISupportedLanguage[]) {
+    let lang: ISupportedLanguage
+
+    const usingCustom = Boolean(custom)
+
+    for (const l of HIGHLIGHTJS_LANGUAGES) {
+      if (hljs.getLanguage(l.value)) {
+        if (usingCustom) {
+          // Check whether user want differet name for this language
+          lang = custom.find((lg) => lg.value === l.value)
+
+          lang = lang ?? l
+        } else {
+          lang = l
+        }
+
+        this.supportedLanguages.push(lang)
+      }
+    }
+  }
+
   /**
    * Renders Block content
    *
@@ -219,8 +233,6 @@ export default class CodeBlock implements BlockTool {
 
     if (this.readOnly) {
       const language = make('span', 'language')
-
-      console.log(this.currentSelectedLanguage)
 
       const lang = this.supportedLanguages.find(
         (l) => l.value === this.currentSelectedLanguage,

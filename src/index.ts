@@ -5,8 +5,10 @@ import CodeBlock, { ICodeBlockConfigs } from './plugin'
 import hljs from 'highlight.js/lib/core'
 
 import AsciiDoc from 'highlight.js/lib/languages/asciidoc'
+import Typescript from 'highlight.js/lib/languages/typescript'
 
 hljs.registerLanguage('asciidoc', AsciiDoc)
+hljs.registerLanguage('typescript', Typescript)
 
 window.onload = () => {
   const editorjs = new EditorJS({
@@ -19,12 +21,8 @@ window.onload = () => {
           allowValidation: true,
           supportedLanguages: [
             {
-              label: 'Ascii Doc',
-              value: 'asciidoc',
-            },
-            {
-              label: 'C++',
-              value: 'cpp',
+              label: 'Ascii', // custom name
+              value: 'asciidoc', // make sure it's the same alias as you registered above
             },
           ],
         } as ICodeBlockConfigs,

@@ -65,7 +65,8 @@ export const makeSelect = (
     optionsContainer: HTMLDivElement,
     searchInput: HTMLInputElement,
     optionsListContainer: HTMLDivElement,
-    optionDiv: HTMLDivElement
+    optionDiv: HTMLDivElement,
+    currentSelected: string
 
   /* Helper functions */
   const renderOptions = (opts: ISelectOption[], firstInit?: boolean) => {
@@ -101,34 +102,33 @@ export const makeSelect = (
 
       optionDiv.innerHTML = select.options[i].innerHTML
 
+      if (opts[i].value === currentSelected) {
+        optionDiv.setAttribute('class', 'same-as-selected')
+      } else {
+        optionDiv.removeAttribute('class')
+      }
+
       optionDiv.addEventListener('click', (e) => {
         const target = e.target as HTMLDivElement
 
         const value = target.dataset.value
 
-        /*
-                  When an item is clicked, update the original select box, and the selected item
-              */
-        for (let j = 0; j < options.length; ++j) {
-          if (select.options[j].value === value) {
-            select.selectedIndex = j
-            selected.innerHTML = target.innerHTML
-            selected.appendChild(arrowIcon)
+        currentSelected = value
 
-            // Clear the previous selected item in the option list
-            const sameAsSelected =
-              optionsListContainer.getElementsByClassName('same-as-selected')
+        /* Update selected DIV */
+        selected.innerHTML = target.innerHTML
+        selected.appendChild(arrowIcon)
 
-            for (let k = 0; k < sameAsSelected.length; ++k) {
-              sameAsSelected[k].removeAttribute('class')
-            }
+        // Clear the previous selected item in the option list
+        const sameAsSelected =
+          optionsListContainer.getElementsByClassName('same-as-selected')
 
-            // Update this target as current selected
-            target.setAttribute('class', 'same-as-selected')
-
-            break
-          }
+        for (let k = 0; k < sameAsSelected.length; ++k) {
+          sameAsSelected[k].removeAttribute('class')
         }
+
+        // Update this target as current selected
+        target.setAttribute('class', 'same-as-selected')
 
         selected.click()
 
@@ -216,6 +216,8 @@ export const makeSelect = (
   /* Options List container */
   optionsListContainer = make('div', 'items-list') as HTMLDivElement
 
+  currentSelected = options[0].value
+
   renderOptions(options, true)
 
   optionsContainer.appendChild(optionsListContainer)
@@ -238,11 +240,12 @@ export const makeSelect = (
 
     target.classList.toggle('select-arrow-active')
 
+    if (searchInput.value.trim() !== '') {
+      // Reset select options
+      renderOptions(options)
+    }
     // Clear search input
     searchInput.value = ''
-
-    // Reset select options
-    renderOptions(options)
   })
 
   return selectContainer
