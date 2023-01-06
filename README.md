@@ -1,4 +1,4 @@
-# editorjs-code
+# editorjs-code-highlight
 Code block for [EditorJS](https://editorjs.io/) using [highlight.js](https://highlightjs.org/) for highlighting
 
 ![](https://github.com/bquangDinh/editorjs-code/blob/main/imgs/preview.png)
