@@ -12,7 +12,7 @@ Code block for [EditorJS](https://editorjs.io/) using [highlight.js](https://hig
 
 ## Install
 `
-npm install bquangDinh/editorjs-code
+npm install editorjs-code-highlight
 `
 ## Usage
 ```ts

@@ -1,6 +1,6 @@
 {
   "name": "editorjs-code-highlight",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Code Block for EditorJS",
   "main": "dist/bundle.js",
   "scripts": {
