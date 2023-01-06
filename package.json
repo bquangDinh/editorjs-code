@@ -1,5 +1,5 @@
 {
-  "name": "editorjs-code",
+  "name": "editorjs-code-highlight",
   "version": "1.0.0",
   "description": "Code Block for EditorJS",
   "main": "dist/bundle.js",
@@ -19,7 +19,7 @@
     "codex editor",
     "tool",
     "code",
-    "higlight",
+    "highlight",
     "editor.js",
     "editorjs"
   ],
