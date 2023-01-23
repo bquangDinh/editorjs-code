@@ -4,7 +4,7 @@ Code block for [EditorJS](https://editorjs.io/) using [highlight.js](https://hig
 ![](https://github.com/bquangDinh/editorjs-code/blob/main/imgs/preview.png)
 
 ## Features
-- Supports up to **40** common languages from [highlight.js](https://highlightjs.org/)
+- Supports **197** languages from [highlight.js](https://highlightjs.org/)
 - Support copying code
 - Support caption
 - Easy selecting language with search

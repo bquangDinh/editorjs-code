@@ -9,7 +9,7 @@ import { makeSelect } from './ui'
 import { Utils } from './utils/util'
 
 /* Libs */
-import hljs from 'highlight.js/lib/common'
+// import hljs from 'highlight.js/lib/common'
 
 import { HIGHLIGHTJS_LANGUAGES } from './constants/highlightjs-languages'
 
@@ -103,14 +103,6 @@ export default class CodeBlock implements BlockTool {
   private readOnly = false
 
   constructor({ data, config, api, readOnly }: ICodeBlockConstructorParams) {
-    /* Check saved data */
-    if (this.isDataValid(data)) {
-      // Saved data is valid, initialize block from the saved data
-      this.data = data
-
-      this.currentSelectedLanguage = data.language
-    }
-
     /* Build supported languages based on hljs registered languages */
     this.buildSupportedLanguages(config.supportedLanguages)
 
@@ -134,6 +126,14 @@ export default class CodeBlock implements BlockTool {
       } else {
         this.currentSelectedLanguage = this.supportedLanguages[0].value
       }
+    }
+
+    /* Check saved data */
+    if (this.isDataValid(data)) {
+      // Saved data is valid, initialize block from the saved data
+      this.data = data
+
+      this.currentSelectedLanguage = data.language
     }
 
     /* Save API */
@@ -204,22 +204,16 @@ export default class CodeBlock implements BlockTool {
     const usingCustom = Boolean(custom)
 
     for (const l of HIGHLIGHTJS_LANGUAGES) {
-      if (hljs.getLanguage(l.value)) {
-        if (usingCustom) {
-          // Check whether user want differet name for this language
-          lang = custom.find((lg) => lg.value === l.value)
+      if (usingCustom) {
+        // Check whether user want differet name for this language
+        lang = custom.find((lg) => lg.value === l.value)
 
-          lang = lang ?? l
-        } else {
-          lang = l
-        }
-
-        this.supportedLanguages.push(lang)
+        lang = lang ?? l
+      } else {
+        lang = l
       }
-    }
 
-    if (this.supportedLanguages.length === 0) {
-      throw new Error('An empty supported languages is provided!')
+      this.supportedLanguages.push(lang)
     }
   }
 
@@ -540,7 +534,7 @@ export default class CodeBlock implements BlockTool {
    * Render highlighted code based on given value
    * @param value
    */
-  updateContent(value: string) {
+  async updateContent(value: string) {
     if (!this.codeRef || !this.inputRef) {
       throw new Error('No reference found! You may forgot to call render()')
     }
@@ -553,6 +547,8 @@ export default class CodeBlock implements BlockTool {
     this.codeRef.innerHTML = value
       .replace(new RegExp('&', 'g'), '&amp;')
       .replace(new RegExp('<', 'g'), '&lt;')
+
+    const hljs = (await import('highlight.js')).default
 
     // Highlight
     hljs.highlightElement(this.codeRef)

@@ -138,5 +138,5 @@ export default class CodeBlock implements BlockTool {
      * Render highlighted code based on given value
      * @param value
      */
-    updateContent(value: string): void;
+    updateContent(value: string): Promise<void>;
 }

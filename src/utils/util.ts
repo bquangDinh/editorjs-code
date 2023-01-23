@@ -1,3 +1,7 @@
+export interface IImport {
+  default: unknown
+}
+
 export const Utils = {
   CopyTextToClipBoard: async (text: string) => {
     if (!document) {
@@ -42,5 +46,8 @@ export const Utils = {
       })
 
     return done
+  },
+  IsImport: (obj: unknown): obj is IImport => {
+    return typeof obj === 'object' && typeof 'default' in obj
   },
 }
