@@ -1,6 +1,7 @@
-@import url("https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/default.min.css");
+@import url('https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/default.min.css');
 
 .editorjs-code-block {
+  margin: 10px 0 10px 0;
   box-sizing: border-box;
 
   * {
@@ -70,13 +71,13 @@
         z-index: 5;
 
         .search-input {
-            margin: 5px;
-            padding: 5px;
-            background-color: lighten($color: #292929, $amount: 20%);
-            border: 0;
-            outline: 0;
-            border-radius: 2px;
-            color: white;
+          margin: 5px;
+          padding: 5px;
+          background-color: lighten($color: #292929, $amount: 20%);
+          border: 0;
+          outline: 0;
+          border-radius: 2px;
+          color: white;
         }
 
         .items-list {
@@ -106,9 +107,9 @@
     }
 
     .language {
-        font-size: 12px;
-        font-family: Arial, Helvetica, sans-serif;
-        margin: 5px
+      font-size: 12px;
+      font-family: Arial, Helvetica, sans-serif;
+      margin: 5px;
     }
 
     .btn-div {
@@ -132,7 +133,7 @@
         }
 
         &.copy-btn-only {
-            border-radius: 5px;
+          border-radius: 5px;
         }
       }
 
