@@ -3,7 +3,7 @@
   <head>
     <title><%= htmlWebpackPlugin.options.title %></title>
   </head>
-  <body>
+  <body style="overflow-x: hidden;">
     <div
       style="
         display: flex;
@@ -15,7 +15,15 @@
     >
       <div id="editorjs-holder" style="width: 100%"></div>
       <button id="save-btn">Save</button>
-      <div id="output"></div>
+      <div
+        style="
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        "
+      >
+        <code id="output" style="padding: 0 50px 0 50px; margin-top: 50px;"></code>
+      </div>
     </div>
   </body>
 </html>
