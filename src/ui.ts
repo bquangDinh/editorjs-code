@@ -112,9 +112,10 @@ export const makeSelect = (
       }
 
       optionDiv.addEventListener('click', (e) => {
-        const target = e.target as HTMLDivElement
+        const target = e.currentTarget as HTMLDivElement
 
         const value = target.dataset.value
+        if (value === undefined) return
 
         currentSelected = value
 
@@ -164,7 +165,7 @@ export const makeSelect = (
 
   selected.innerHTML =
     configs && configs.defaultOption
-      ? options.find((o) => o.value === configs.defaultOption).label
+      ? options.find((o) => o.value === configs.defaultOption)?.label ?? options[0].label
       : options[0].label
 
   /* Arrow icon */

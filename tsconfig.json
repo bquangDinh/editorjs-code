@@ -1,11 +1,11 @@
 {
     "compilerOptions": {
+        "rootDir": "./src",
         "outDir": "./dist/",
         "noImplicitAny": true,
         "module": "ES2020",
-        "moduleResolution": "Node",
-        "watch": true,
-        "target": "ES5",
+        "moduleResolution": "Bundler",
+        "target": "ES2015",
         "sourceMap": true,
         "allowSyntheticDefaultImports": true,
         "jsx": "preserve",

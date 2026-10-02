@@ -9,9 +9,75 @@ import { makeSelect } from './ui'
 import { Utils } from './utils/util'
 
 /* Libs */
-// import hljs from 'highlight.js/lib/common'
+import hljs from 'highlight.js/lib/core'
+import type { LanguageFn } from 'highlight.js'
 
 import { HIGHLIGHTJS_LANGUAGES } from './constants/highlightjs-languages'
+
+type LanguageModule = LanguageFn | { default: LanguageFn }
+type LanguageModuleContext = {
+  (request: string): Promise<LanguageModule>
+  keys(): string[]
+}
+
+declare const require: {
+  context: (
+    request: string,
+    recursive: boolean,
+    regExp: RegExp,
+    mode: 'lazy',
+  ) => LanguageModuleContext
+}
+
+const languageModuleContext = require.context(
+  '../node_modules/highlight.js/lib/languages',
+  false,
+  /\.js$/,
+  'lazy',
+)
+
+const availableLanguageModules = new Set(languageModuleContext.keys())
+const languageModuleAliases: Record<string, string> = {
+  dpr: 'delphi',
+  graph: 'roboconf',
+  hbs: 'handlebars',
+  k: 'q',
+  p21: 'step21',
+  tex: 'latex',
+  yml: 'yaml',
+}
+const languageModulePromises = new Map<string, Promise<void>>()
+
+async function loadLanguageModule(language: string): Promise<boolean> {
+  const normalizedLanguage = language.toLowerCase()
+  const moduleName = languageModuleAliases[normalizedLanguage] ?? normalizedLanguage
+  const request = `./${moduleName}.js`
+
+  if (!availableLanguageModules.has(request)) return false
+
+  let loadPromise = languageModulePromises.get(moduleName)
+
+  if (!loadPromise) {
+    loadPromise = languageModuleContext(request).then((loadedModule) => {
+      const languageDefinition =
+        typeof loadedModule === 'function'
+          ? loadedModule
+          : loadedModule.default
+
+      hljs.registerLanguage(moduleName, languageDefinition)
+    })
+    languageModulePromises.set(moduleName, loadPromise)
+  }
+
+  try {
+    await loadPromise
+  } catch (error) {
+    languageModulePromises.delete(moduleName)
+    throw error
+  }
+
+  return true
+}
 
 export interface ISupportedLanguage {
   label: string
@@ -104,7 +170,7 @@ export default class CodeBlock implements BlockTool {
 
   constructor({ data, config, api, readOnly }: ICodeBlockConstructorParams) {
     /* Build supported languages based on hljs registered languages */
-    this.buildSupportedLanguages(config.supportedLanguages)
+    this.buildSupportedLanguages(config ? config.supportedLanguages : [])
 
     /* Save Config */
     /* When readOnly mode is true, then there's no point to set config here */
@@ -129,7 +195,7 @@ export default class CodeBlock implements BlockTool {
     }
 
     /* Check saved data */
-    if (this.isDataValid(data)) {
+    if (data && this.isDataValid(data)) {
       // Saved data is valid, initialize block from the saved data
       this.data = data
 
@@ -183,7 +249,9 @@ export default class CodeBlock implements BlockTool {
    * @param data
    * @returns {boolean}
    */
-  isDataValid(data: ICodeBlockData) {
+  isDataValid(data: unknown) {
+    if (data === null) return false;
+
     if (typeof data === 'object') {
       return (
         'language' in data &&
@@ -199,14 +267,14 @@ export default class CodeBlock implements BlockTool {
   }
 
   buildSupportedLanguages(custom?: ISupportedLanguage[]) {
-    let lang: ISupportedLanguage
+    let lang: ISupportedLanguage | undefined
 
     const usingCustom = Boolean(custom)
 
     for (const l of HIGHLIGHTJS_LANGUAGES) {
       if (usingCustom) {
-        // Check whether user want differet name for this language
-        lang = custom.find((lg) => lg.value === l.value)
+        // Check whether user want different name for this language
+        lang = custom!.find((lg) => lg.value === l.value)
 
         lang = lang ?? l
       } else {
@@ -245,6 +313,10 @@ export default class CodeBlock implements BlockTool {
         defaultOption: this.currentSelectedLanguage,
         onSelect: this.onSelectLanguage.bind(this),
       })
+
+      if (!languageSelect) {
+        throw new Error('No supported languages are available')
+      }
 
       controlContainer.appendChild(languageSelect)
     }
@@ -326,11 +398,12 @@ export default class CodeBlock implements BlockTool {
 
     /* Fetch data if present */
     if (this.data) {
-      this.inputRef.value = this.data.code
+      const savedCode = this.data.code
+      this.inputRef.value = savedCode
 
       // wait until the input ref value is all set
       setTimeout(() => {
-        this.updateContent(this.data.code)
+        this.updateContent(savedCode)
       }, 500)
 
       if (this.data.caption && this.data.caption.trim() !== '') {
@@ -357,6 +430,9 @@ export default class CodeBlock implements BlockTool {
     if (!this.inputRef) {
       throw new Error('No ref found! You may forgot to call render()')
     }
+
+    // Return back the '<' and '&' characters that were escaped for HTML rendering
+    this.inputRef.value = this.inputRef.value.replace(/&lt;/g, '<').replace(/&amp;/g, '&')
 
     return {
       language: this.currentSelectedLanguage,
@@ -488,7 +564,10 @@ export default class CodeBlock implements BlockTool {
 
   /* Fired when keydown event is detected in the caption input field */
   onCaptionKeyDown(e: KeyboardEvent) {
-    if (!this.captionInputRef) {
+    const captionInput = this.captionInputRef
+    const container = this.containerRef
+
+    if (!captionInput || !container) {
       throw new Error('No ref found!')
     }
 
@@ -496,7 +575,7 @@ export default class CodeBlock implements BlockTool {
       const value = (e.target as HTMLTextAreaElement).value
 
       if (value === '') {
-        this.containerRef.removeChild(this.captionInputRef)
+        container.removeChild(captionInput)
 
         this.useCaption = false
       }
@@ -505,6 +584,12 @@ export default class CodeBlock implements BlockTool {
 
   /* Add caption input field */
   addCaption(caption = '') {
+    const container = this.containerRef
+
+    if (!container) {
+      throw new Error('No ref found! You may forgot to call render()')
+    }
+
     if (!this.useCaption) {
       const input = make('textarea', 'caption-input', {
         placeholder: this.api
@@ -516,7 +601,7 @@ export default class CodeBlock implements BlockTool {
 
       input.onkeydown = this.onCaptionKeyDown.bind(this)
 
-      this.containerRef.appendChild(input)
+      container.appendChild(input)
 
       this.captionInputRef = input as HTMLTextAreaElement
 
@@ -527,7 +612,13 @@ export default class CodeBlock implements BlockTool {
       this.useCaption = true
     }
 
-    this.captionInputRef.value = caption
+    const captionInput = this.captionInputRef
+
+    if (!captionInput) {
+      throw new Error('No caption input found!')
+    }
+
+    captionInput.value = caption
   }
 
   /**
@@ -548,10 +639,15 @@ export default class CodeBlock implements BlockTool {
       .replace(new RegExp('&', 'g'), '&amp;')
       .replace(new RegExp('<', 'g'), '&lt;')
 
-    const hljs = (await import('highlight.js')).default
+    const languageLoaded = await loadLanguageModule(this.currentSelectedLanguage)
 
-    // Highlight
-    hljs.highlightElement(this.codeRef)
+    if (languageLoaded) {
+      // Remove data-highlighted attribute if it exists
+      this.codeRef.removeAttribute('data-highlighted')
+
+      // Highlight
+      hljs.highlightElement(this.codeRef)
+    }
 
     // Update textarea height
     this.inputRef.style.height = '5px'
