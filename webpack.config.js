@@ -19,7 +19,18 @@ module.exports = (env, argv) => {
   let output = {
     filename: 'bundle.js',
     path: path.resolve(__dirname, 'dist'),
+    chunkFilename: '[id].bundle.js',
   };
+
+  if (NODE_ENV === 'production') {
+    output = {
+      ...output,
+      library: 'CodeTool',
+      libraryTarget: 'umd',
+      libraryExport: 'default',
+      publicPath: '/editorjs-code-highlight/',
+    };
+  }
 
   let outputForProduction = {};
 

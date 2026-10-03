@@ -1,0 +1,1 @@
+(self.webpackChunkCodeTool=self.webpackChunkCodeTool||[]).push([[1134],{1134(e,i,n){!function e(){e.warned||(e.warned=!0,console.log('Deprecation (warning): Using file extension in specifier is deprecated, use "highlight.js/lib/languages/gml" instead of "highlight.js/lib/languages/gml.js"'))}(),e.exports=n(1195)}}]);

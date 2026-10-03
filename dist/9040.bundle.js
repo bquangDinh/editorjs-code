@@ -1,0 +1,1 @@
+(self.webpackChunkCodeTool=self.webpackChunkCodeTool||[]).push([[9040],{9040(e){e.exports=function(e){return{name:"Plain text",aliases:["text","txt"],disableAutodetect:!0}}}}]);

@@ -1,0 +1,1 @@
+(self.webpackChunkCodeTool=self.webpackChunkCodeTool||[]).push([[650],{650(e,i,n){!function e(){e.warned||(e.warned=!0,console.log('Deprecation (warning): Using file extension in specifier is deprecated, use "highlight.js/lib/languages/1c" instead of "highlight.js/lib/languages/1c.js"'))}(),e.exports=n(5975)}}]);

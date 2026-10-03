@@ -30,7 +30,7 @@ declare const require: {
 }
 
 const languageModuleContext = require.context(
-  'highlightjs-language-modules',
+  '../node_modules/highlight.js/lib/languages',
   false,
   /\.js$/,
   'lazy',

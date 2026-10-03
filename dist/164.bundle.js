@@ -1,0 +1,1 @@
+(self.webpackChunkCodeTool=self.webpackChunkCodeTool||[]).push([[164],{164(e){e.exports=function(e){return{name:"VBScript in HTML",subLanguage:"xml",contains:[{begin:"<%",end:"%>",subLanguage:"vbscript"}]}}}}]);

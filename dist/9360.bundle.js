@@ -1,0 +1,1 @@
+(self.webpackChunkCodeTool=self.webpackChunkCodeTool||[]).push([[9360],{9360(e,s,i){!function e(){e.warned||(e.warned=!0,console.log('Deprecation (warning): Using file extension in specifier is deprecated, use "highlight.js/lib/languages/sqf" instead of "highlight.js/lib/languages/sqf.js"'))}(),e.exports=i(8706)}}]);

@@ -3,7 +3,6 @@
   "version": "1.3.2",
   "description": "Code Block for EditorJS",
   "main": "dist/bundle.js",
-  "module": "src/plugin.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "npm run lint && webpack --mode=production",
