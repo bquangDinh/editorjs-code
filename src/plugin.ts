@@ -30,7 +30,7 @@ declare const require: {
 }
 
 const languageModuleContext = require.context(
-  '../node_modules/highlight.js/lib/languages',
+  'highlightjs-language-modules',
   false,
   /\.js$/,
   'lazy',
@@ -50,7 +50,8 @@ const languageModulePromises = new Map<string, Promise<void>>()
 
 async function loadLanguageModule(language: string): Promise<boolean> {
   const normalizedLanguage = language.toLowerCase()
-  const moduleName = languageModuleAliases[normalizedLanguage] ?? normalizedLanguage
+  const moduleName =
+    languageModuleAliases[normalizedLanguage] ?? normalizedLanguage
   const request = `./${moduleName}.js`
 
   if (!availableLanguageModules.has(request)) return false
@@ -60,9 +61,7 @@ async function loadLanguageModule(language: string): Promise<boolean> {
   if (!loadPromise) {
     loadPromise = languageModuleContext(request).then((loadedModule) => {
       const languageDefinition =
-        typeof loadedModule === 'function'
-          ? loadedModule
-          : loadedModule.default
+        typeof loadedModule === 'function' ? loadedModule : loadedModule.default
 
       hljs.registerLanguage(moduleName, languageDefinition)
     })
@@ -250,7 +249,7 @@ export default class CodeBlock implements BlockTool {
    * @returns {boolean}
    */
   isDataValid(data: unknown) {
-    if (data === null) return false;
+    if (data === null) return false
 
     if (typeof data === 'object') {
       return (
@@ -432,7 +431,9 @@ export default class CodeBlock implements BlockTool {
     }
 
     // Return back the '<' and '&' characters that were escaped for HTML rendering
-    this.inputRef.value = this.inputRef.value.replace(/&lt;/g, '<').replace(/&amp;/g, '&')
+    this.inputRef.value = this.inputRef.value
+      .replace(/&lt;/g, '<')
+      .replace(/&amp;/g, '&')
 
     return {
       language: this.currentSelectedLanguage,
@@ -639,7 +640,9 @@ export default class CodeBlock implements BlockTool {
       .replace(new RegExp('&', 'g'), '&amp;')
       .replace(new RegExp('<', 'g'), '&lt;')
 
-    const languageLoaded = await loadLanguageModule(this.currentSelectedLanguage)
+    const languageLoaded = await loadLanguageModule(
+      this.currentSelectedLanguage,
+    )
 
     if (languageLoaded) {
       // Remove data-highlighted attribute if it exists

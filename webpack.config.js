@@ -35,7 +35,7 @@ module.exports = (env, argv) => {
 
   return {
     entry: entry,
-    devtool: 'inline-source-map',
+    devtool: NODE_ENV === 'production' ? false : 'inline-source-map',
     module: {
       rules: [
         {
@@ -52,6 +52,11 @@ module.exports = (env, argv) => {
     },
     resolve: {
       extensions: ['.tsx', '.ts', '.js'],
+      alias: {
+        'highlightjs-language-modules$': path.dirname(
+          require.resolve('highlight.js/lib/languages/javascript'),
+        ),
+      },
     },
     output: output,
     plugins: plugins,

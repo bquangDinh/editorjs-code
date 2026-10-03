@@ -93,13 +93,13 @@ export default class CodeBlock implements BlockTool {
      * Whether validating on block is allowed
      * @returns {boolean}
      */
-    get allowValidation(): boolean;
+    get allowValidation(): boolean | undefined;
     /**
      * Check whether the saved data is valid to display
      * @param data
      * @returns {boolean}
      */
-    isDataValid(data: ICodeBlockData): boolean;
+    isDataValid(data: unknown): boolean;
     buildSupportedLanguages(custom?: ISupportedLanguage[]): void;
     /**
      * Renders Block content

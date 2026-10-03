@@ -1,4 +1,5 @@
 export function make(
+  /* eslint-disable */
   tag: keyof HTMLElementTagNameMap,
   classNames?: string[] | string,
   attributes?: Record<string, string>,

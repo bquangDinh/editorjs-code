@@ -8,4 +8,4 @@ export interface IMakeSelectConfigs {
     defaultOption?: string;
     onSelect: (value: string) => unknown;
 }
-export declare const makeSelect: (options: ISelectOption[], configs?: IMakeSelectConfigs) => HTMLDivElement;
+export declare const makeSelect: (options: ISelectOption[], configs?: IMakeSelectConfigs) => HTMLDivElement | undefined;

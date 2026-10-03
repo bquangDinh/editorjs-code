@@ -49,9 +49,11 @@ export const makeSelect = (
 
   if (configs) {
     if (configs.classNames) {
-      Array.isArray(configs.classNames)
-        ? classNames.push(...configs.classNames)
-        : classNames.push(configs.classNames)
+      if (Array.isArray(configs.classNames)) {
+        classNames.push(...configs.classNames)
+      } else {
+        classNames.push(configs.classNames)
+      }
     }
 
     if (configs.attributes) {
@@ -165,7 +167,8 @@ export const makeSelect = (
 
   selected.innerHTML =
     configs && configs.defaultOption
-      ? options.find((o) => o.value === configs.defaultOption)?.label ?? options[0].label
+      ? (options.find((o) => o.value === configs.defaultOption)?.label ??
+        options[0].label)
       : options[0].label
 
   /* Arrow icon */
